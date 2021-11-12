@@ -210,7 +210,7 @@ srun echo "Hello $USER! You are on node $HOSTNAME"
 # Applying for billing units
 
 - Billing units can be also applied via [My Projects page in MyCSC](https://my.csc.fi/welcome)
-   - Please acknowledge using CSC resources in your publications
+   - Please [acknowledge using CSC](https://docs.csc.fi/support/faq/how-to-cite-csc/) resources in your publications
    - Please also inform us about your work by adding your publications to the resource application!
 - Academic usage is one of the [free-of-use cases](https://research.csc.fi/pricing)
 - You can estimate [usage with the online billing calculator](https://research.csc.fi/billing-and-monitoring#buc) 
