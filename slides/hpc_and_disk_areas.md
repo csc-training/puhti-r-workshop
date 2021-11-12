@@ -44,26 +44,11 @@ Roughly you can think of
 - Jobs are run in the compute nodes
 - A batch job system (aka scheduler) is used to run and manage the jobs
   - On CSC machines we use Slurm
-  - Other common systems include SGE and Torque/PBS
-  - Syntax is different, but basic operation is similar
+
 </div>
 <div class="column">
 ![](./img/cluster.svg){width=80%} 
 </div>
-
-
-
-# Which supercomputer to use? 
-
-- What kind of recources can _your application_ use?
-  - Can it use more than one core?
-  - How much memory it will need?
-  - Can it use GPU or NVMe?
-  - What takes long (is the time limiting part) in your job?
-- See what kind of resources are _available_
-  - Is my code already installed?
-  - Max. runtime, partitions (queues), provisioning policy (Per core/per node/other)
-  - Each system is different, so check the documentation
 
 # Quick and dirty comparison of Puhti and Mahti
 
@@ -79,26 +64,20 @@ Roughly you can think of
 In short: Mahti is for much larger parallel jobs, prepare to install and optimize your code.
 (Still, a Puhti *node* is > 10x your laptop.)
 
----
-theme: csc-2019
-lang: en
----
+# Which supercomputer to use? 
+
+- What kind of recources can _your application_ use?
+  - Can it use more than one core?
+  - How much memory it will need?
+  - Can it use GPU or NVMe?
+  - What takes long (is the time limiting part) in your job?
+- See what kind of resources are _available_
+  - Is my code already installed?
+  - Max. runtime, partitions (queues), provisioning policy (Per core/per node/other)
+  - Each system is different, so check the documentation
 
 # Disk areas in CSC HPC environment
 In this section, you will learn how to manage different disk areas in HPC environment at CSC
-
-<div class="column">
-![](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-sa.png)
-</div>
-<div class="column">
-<small>
-All material (C) 2020-2021 by CSC -IT Center for Science Ltd.
-This work is licensed under a **Creative Commons Attribution-ShareAlike** 4.0
-Unported License, [http://creativecommons.org/licenses/by-sa/4.0/](http://creativecommons.org/licenses/by-sa/4.0/)
-</small>
-</div>
-
-# Overview of disk areas
 
 - Main disk areas and their specific uses in Puhti/Mahti
 - Moving data between supercomputers
