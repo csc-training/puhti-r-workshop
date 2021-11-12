@@ -76,6 +76,7 @@ Unported License, [http://creativecommons.org/licenses/by-sa/4.0/](http://creati
 - You have logged in via [Command Line](https://docs.csc.fi/computing/connecting/) and/or [Web Interface](https://docs.csc.fi/computing/webinterface/)
 
 VOTE: Do you want to go through  
-a) [Setting up SSH-keys](https://docs.csc.fi/computing/connecting/#setting-up-ssh-keys)  
-b) [Developing scripts remotely](https://docs.csc.fi/support/tutorials/remote-dev/)  
+a) [Command Line / SSH login?](https://docs.csc.fi/computing/connecting/)
+b) [Setting up SSH-keys](https://docs.csc.fi/computing/connecting/#setting-up-ssh-keys)  
+c) [Developing scripts remotely](https://docs.csc.fi/support/tutorials/remote-dev/)  
 in the workshop?
