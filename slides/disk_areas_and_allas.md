@@ -19,12 +19,19 @@ Unported License, [http://creativecommons.org/licenses/by-sa/4.0/](http://creati
 
 
 # Disk areas in CSC HPC environment
-In this section, you will learn how to manage different disk areas in HPC environment at CSC
+In this section:
 
 - Main disk areas and their specific uses in Puhti/Mahti
 - Moving data between supercomputers
 - Understanding quotas (both usable space and number of files) for different disk areas
 - Additional fast disk areas
+
+# Accessing files from Puhti Web Interface
+
+- Accessible folders: HOME, projappl and scratch
+- Create (text)files and folders
+- Upload/download files
+- Copy/move files
 
 # Main disk areas in Puhti/Mahti
 
@@ -39,18 +46,6 @@ In this section, you will learn how to manage different disk areas in HPC enviro
 - These directories reside on [Lustre parallel file system](https://docs.csc.fi/computing/lustre/)
 - Default quotas and more info on [disk areas section](https://docs.csc.fi/computing/disk/)
 
-# Moving data between and to/from supercomputers
-
-- Puhti and Mahti have their own disk systems
-- Data can be moved between the supercomputers 
-    - [directly with rsync](https://docs.csc.fi/data/moving/rsync/) 
-    - via [Allas object storage](https://docs.csc.fi/data/Allas/)
-- There are [many ways to transfer data to/from CSC and your local computer](https://docs.csc.fi/data/moving/)
-
-# Disk and storage overview  
-
-![](./img/disk-systems.svg){width=90%}
-
 # Additional fast local disk areas 
 
 - `$TMPDIR` on Login nodes
@@ -60,6 +55,18 @@ In this section, you will learn how to manage different disk areas in HPC enviro
     - Interactive batch job nodes, IO- and gpu-nodes have [local fast storage (NVMe)](https://docs.csc.fi/computing/running/creating-job-scripts-puhti/#local-storage) as `$LOCAL_SCRATCH`
     - You must copy data in and out during your batch job. NVMe is accessible only during your job allocation.
     - If your job reads or writes a lot of small files, using this can give 10x performance boost
+
+# Moving data between and to/from supercomputers
+
+- Puhti and Mahti have their own disk systems
+- Data can be moved between the supercomputers 
+    - directly with [rsync](https://docs.csc.fi/data/moving/rsync/) 
+    - via [Allas object storage](https://docs.csc.fi/data/Allas/)
+- There are [many ways to transfer data to/from CSC and your local computer](https://docs.csc.fi/data/moving/)
+
+# Disk and storage overview  
+
+![](./img/disk-systems.svg){width=90%}
 
 # What are the different disk areas for?
 
@@ -86,34 +93,12 @@ In this section, you will learn how to manage different disk areas in HPC enviro
 - When working with the large number of smaller files, consider using fast local disks
 - [Best practice performance tips for using Lustre](https://docs.csc.fi/computing/lustre/#best-practices)
 
-# How to get access to Allas
-
-Use [https://my.csc.fi](https://my.csc.fi) to 
-
-1. Register to CSC (haka)
-2. Set up a project at CSC (Principal Investigator)
-3. Apply for Puhti and Allas service, quota and billing units for your project
-4. Add other registered users to your project
-5. Members have to register and accept the services in [https://my.csc.fi](https://my.csc.fi)
-
-All project members have equal access to the data in Puhti and Allas.
-
 # Allas – object storage: what it is for?
-
-- Allas is a storage service for all computing and cloud services
-- CEPH based object storage
-- Meant for data during project lifetime
-- Default quota 10 TB / Project 
-- Possible to upload data from personal laptops or organizational storage systems into Allas
-- Clients available in Puhti and Mahti
-- Data can also be shared via Internet
-
-# Allas – object storage: what it is for?
-
-<br>
 
 <div class="column">
-- Data can be moved to and from Allas directly without using Puhti or Mahti.
+- Allas is a storage service for all computing and cloud services
+- Meant for data during project lifetime
+- Default quota 10 TB / Project 
 - For computation the data has to be typically copied to a file system in some computer
 - Data can be shared publicly to Internet, which is otherwise not easily possible at CSC.
 </div>
@@ -125,15 +110,17 @@ All project members have equal access to the data in Puhti and Allas.
 
 - **Allas is not a file system** (even though many tools try to fool you to think so). It is just a place for a pile of static data objects.
 - **Allas is not a data management environment**. Tools for etc. search, metadata,version control and access management are minimal.
-- **Allas is not a back up service**. Project members can delete all the data with just one command.
+- **Allas is not a foolproof back up service**. Project members can delete all the data with just one command.
 
-# Allas - storage 
+# How to get access to Allas
 
-- An object is stored in multiple servers so a disk or server break does not cause data loss
-- There is no backup i.e. if a file is deleted, it cannot be recovered
-- Data cannot be modified while it is in the object storage – data is immutable.
-- Rich set of data management features are to be built on top of it.
-- Usage through S3 and Swift APIs are supported
+Use [https://my.csc.fi](https://my.csc.fi) to 
+
+1. Apply for Puhti and Allas service, quota and billing units for your project
+2. Add other registered users to your project
+3. Members have to register and accept the services in [https://my.csc.fi](https://my.csc.fi)
+
+All project members have equal access to the data in Puhti and Allas.
 
 # Allas – object storage: terminology
 
@@ -176,17 +163,28 @@ All project members have equal access to the data in Puhti and Allas.
 
 **Laptops (Windows, Mac):**
 
-- [Cyberduck](https://cyberduck.io/), [FileZilla(pro)](https://filezilla-project.org/), [Pouta-www interface](https://docs.csc.fi/cloud/pouta/launch-vm-from-web-gui/)
+- [Cyberduck](https://cyberduck.io/), [FileZilla(pro)](https://filezilla-project.org/), [Pouta-www interface](https://docs.csc.fi/cloud/pouta/launch-vm-from-web-gui/), [Puhti Web Interface](https://docs.csc.fi/computing/webinterface/rclone/)
 
-# Allas – first steps for Puhti 
+# Allas – first steps for Puhti Web Interface
 
-- Use [https://my.csc.fi](https://my.csc.fi) to apply Allas access for your project – Allas is not automatically available
+- After applying Allas access for your project:
+- Login to Puhti in Terminal and setup connection to Allas with commands:
+```bash
+module load allas
+allas-conf --store-token -p <project>
+```
+- Login to [Puhti Web Interface](puhti.csc.fi) and select RClone/Allas
+- Check [the documentation](https://docs.csc.fi/computing/webinterface/rclone/)
+
+# Allas – first steps for Puhti CLI
+
+- After applying Allas access for your project:
 - In Puhti and Mahti, setup connection to Allas with commands:
 ```bash
 module load allas
 allas-conf
 ```
-- Study the manual and [Start using Allas with rclone or a-tools instructions](https://docs.csc.fi/data/Allas/)
+- Study [Allas documentation](https://docs.csc.fi/data/Allas/)
 
 # Allas – rclone
 
@@ -196,7 +194,6 @@ allas-conf
 - Overwrites and removes data without asking!
 - The default configuration at CSC uses swift-protocol but S3 can be used too.
 Use with care: [rclone instructions in Docs CSC](https://docs.csc.fi/#data/Allas/using_allas/rclone/)
-
 
 # Allas – a-tools
 
@@ -208,21 +205,6 @@ Use with care: [rclone instructions in Docs CSC](https://docs.csc.fi/#data/Allas
 - Default bucket names based on directories of Puhti and Mahti
 - [a-commands instructions in Docs CSC](https://docs.csc.fi/#data/Allas/using_allas/a_commands/)
 
-
-# A-put/a-get: pros and cons
-
-<div class="column">
-➕ Saving data as a tar package preserves time stamps, accession settings, and internal links of the directory  
-➕ `zstdmt` compression reduces size  
-➕ Default bucket name and metadata reflect the directory sturctures of Puhti and Mahti  
-➕ Checks to prevent over writing data accidentally  
-</div>
-<div class="column">
-➖ Usage of objects, created by `a-put` can be complicated when other object storage tools are used  
-➖ Especially usage from windows is problematic  
-➖ Each object has an additional _ameta object  
-</div>
-
 # Allas problems
 
 - 8 hour connection limit with swift
@@ -230,7 +212,6 @@ Use with care: [rclone instructions in Docs CSC](https://docs.csc.fi/#data/Allas
 - Moving data inside Allas is not possible (swift)
 - No way to freeze data (use two projects if needed).
 - Different interfaces may work in diffrent ways
-
 
 # Things that users should consider 
 
