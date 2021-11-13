@@ -79,8 +79,7 @@ In short: Mahti is for much larger parallel jobs, prepare to install and optimiz
 
 # Module systems in supercomputers
 
-Same information can be found in [the module section of our user guide at docs.csc.fi](https://docs.csc.fi/computing/modules/)
-
+- Same information can be found in [the module section of our user guide at docs.csc.fi](https://docs.csc.fi/computing/modules/)
 - Several softwares with different (possibly conflicting) requirements are needed in one supercomputer
 - The solution for managing this situation: separate the applications in *modules*
 - *Environment modules* set up everything required by a particular application:
@@ -88,7 +87,6 @@ Same information can be found in [the module section of our user guide at docs.c
 
 # Module system in CSC supercomputers
 
-- CSC uses [*Lmod*](https://lmod.readthedocs.io/en/latest/) environment modules, which are using *Lua* programming language
 - Some softwares/applications have their own module (e.g. `gromacs-env`), whereas some are combined in larger modules (e.g. `biokit`, `geoconda`), and some can be found in many different modules (e.g. `gdal`)
 
 - You can check the available applications and their respective modules in the [Application list](https://docs.csc.fi/apps/)
