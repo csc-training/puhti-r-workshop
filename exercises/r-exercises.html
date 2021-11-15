@@ -248,7 +248,7 @@ mkdir &lt;yourname&gt;  # e.g. your surname
 cd &lt;yourname&gt; </code></pre>
 <p><strong>3.2 Creating a serial job file</strong></p>
 <p>One question that often comes up is how to best create batch job files. One way is to type the contents in any text editor on your own computer (e.g. Wordpad) and then copy-paste them into a file on Puhti. That's useful for single files (but for moving several files, <a href="https://docs.csc.fi/data/moving/.">there are many alternatives</a></p>
-<p>For now, copy-paste the following serial batch job file and <strong>fill in the correct details for your project and email address</strong>. Including <code>--mail-type=END</code> and your email will instruct Slurm to send you an email once the job is finished, or if it terminates for any other reason.</p>
+<p>For now, copy-paste the following serial batch job file and <strong>fill in the correct details for your project and email address</strong>. Including <code>--mail-type=END</code> and your email will instruct Slurm to send you an email once the job is finished, or if it terminates for any other reason. The output is similar to what you'd get on the command line using the command <code>seff &lt;jobid&gt;</code>.</p>
 <pre class="bash"><code>#!/bin/bash -l
 #SBATCH --job-name=r_single_proc
 #SBATCH --account=&lt;account&gt;
@@ -335,8 +335,7 @@ fit &lt;- brm(
 toc()</code></pre>
 <p>After submitting this job, it will take some time for it to finish. Once it's done, check the end of the output. How long was the analysis time?</p>
 <p><strong>3.3 Trying out a multicore <code>brms</code> job</strong></p>
-<p>Usually we want to run multiple chains when working with <code>brms</code> (in our case, four).</p>
-<p>A multicore job reservation can be used to speed up this analysis - we already have <code>options(mc.cores...)</code> in our R script, so it should be able to automatically pick up the number of reserved cores. This way all four chains will be executed in parallel (with one core assigned per chain).</p>
+<p>Usually we want to run multiple chains when working with <code>brms</code> (in our case, four). We could try and speed up the job by reserving more cores, with a single core assigned per chain.</p>
 <p>To submit a multicore version of the <code>brms</code> job, create a new batch job file with the following differences:</p>
 <ul>
 <li>The <code>--job-name</code> could be <code>brms_multicore</code></li>
@@ -366,6 +365,53 @@ toc()</code></pre>
 <p><strong>3.4 A few words on <code>brms</code> within-chain parallelism</strong></p>
 <p>The most recent version of <code>brms</code> comes with additional features for within-chain parallelism, which could be used to further speed up the analysis time. For information on this, <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_threading.html">there is a comprehensive vignette</a>.</p>
 <p>Currently (15 Nov 2021) within-chain parallelisation with <code>brms</code> is unavailable in <code>r-env-singularity</code>, as this feature relies on the <code>CmdStanR</code> backend. To enable this feature, work will need to be undertaken to install <code>CmdStan</code> as part of the container recipe.</p>
+<p><strong>3.5 Array jobs</strong></p>
+<p>To try out an array job, use the following batch job file:</p>
+<pre class="r"><code>#!/bin/bash -l
+#SBATCH --job-name=array_test
+#SBATCH --account=&lt;account&gt;
+#SBATCH --mail-type=END
+#SBATCH --mail-user=&lt;email-address&gt;
+#SBATCH --array=1-5
+#SBATCH --output=output_%j.txt
+#SBATCH --error=errors_%j.txt
+#SBATCH --partition=small
+#SBATCH --time=00:05:00
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#SBATCH --mem-per-cpu=1000
+
+# Load r-env-singularity
+module load r-env-singularity
+
+# Clean up .Renviron file in home directory
+if test -f ~/.Renviron; then
+    sed -i '/TMPDIR/d' ~/.Renviron
+fi
+
+# Specify a temp folder path
+echo &quot;TMPDIR=/scratch/&lt;account&gt;&quot; &gt;&gt; ~/.Renviron
+
+# Run the R script
+srun singularity_wrapper exec Rscript --no-save array.R $SLURM_ARRAY_TASK_ID</code></pre>
+<p>... With the following contents for <code>array.R</code>:</p>
+<pre class="r"><code># Which subjob is this?
+arrjobid &lt;- commandArgs(trailingOnly = TRUE)
+print(paste0(&quot;This is subjob &quot;, arrjobid))
+
+# What's the runtime?
+print(paste0(&quot;Runtime:&quot;))
+system.time(sort(runif(1e7)))
+
+# Just to be sure, let's also print out the slurm array task ID
+print(paste0(&quot;The SLURM_ARRAY_TASK_ID is:&quot;))
+Sys.getenv(&quot;SLURM_ARRAY_TASK_ID&quot;)</code></pre>
+<p>This will produce five error files and five output files with information on the subjob number and the runtime (feel free to check out the contents). Note how using <code>SLURM_ARRAY_TASK_ID</code> can be used to access a particular array subjob.</p>
+</div>
+<div id="further-batch-job-examples" class="section level4">
+<h4><strong>4. Further batch job examples</strong></h4>
+<p>We might also be interested in using packages like <code>snow</code> or <code>pbdMPI</code> for MPI jobs. Some examples of these can be found in the <code>r-env-singularity</code> documentation under the <a href="https://docs.csc.fi/apps/r-env-singularity/#parallel-batch-jobs">parallel batch jobs section</a>.</p>
+<p>Several further examples on running serial and parallel R jobs using e.g. the packages <code>snow</code>, <code>parallel</code> and <code>future</code> for the analysis of spatial data can be found <a href="The%20https://github.com/csc-training/geocomputing/tree/master/R/puhti">in this repository</a>.</p>
 </div>
 </div>
 
