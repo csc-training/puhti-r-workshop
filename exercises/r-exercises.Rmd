@@ -1,0 +1,281 @@
+---
+  output:
+  rmdformats::html_clean:
+  highlight: kate
+---
+  
+  
+  ```{r setup, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+# `r-env-singularity` on Puhti
+
+These practical exercises accompany a wider set of slides on the `r-env-singularity` module, [available via GitHub Pages](https://csc-training.github.io/puhti-r-workshop/slides/html/r-env.html#/r-env-singularity-on-puhti).
+
+Other useful links:
+
+- `r-env-singularity` [documentation on CSC docs](https://docs.csc.fi/apps/r-env-singularity/)
+- [Puhti Web Interface overview](https://docs.csc.fi/computing/webinterface/)
+
+#### **1. RStudio Server**
+  
+**1.1 Launching RStudio on the Puhti Web Interface**
+
+Login into the [Puhti Web Interface](https://www.puhti.csc.fi/) using your CSC account.
+Then launch an RStudio session with the following specifications:
+
+- 2 cores
+- 2GB RAM
+- 5GB local disk space
+- A time reservation of 5 minutes
+- Multithreaded session
+
+**1.2 Checking available cores**
+
+Use `future::availableCores()` to check that we indeed have two cores available.
+Remember to run the following line first to make sure the function works properly! 
+
+```r
+options(future.availableCores.methods = "Slurm")
+```
+
+Aside from the above and, can you think of a way to check the number of cores available to the job using environment variables (this can also be done from within R)?
+
+Once done, you can either close the window and let the session expire by itself, or terminate the job using the `Delete` button on the Web Interface.
+
+#### **2. Interactive R terminal session**
+
+**2.1 Starting an interactive session from the Puhti command line**
+
+SSH onto Puhti, for example using [MobaXterm](https://docs.csc.fi/computing/connecting/) (if using a Windows machine).
+
+Once logged in, start an interactive session using `sinteractive`. Let's reserve two cores and ten minutes for this test job.
+If looking for more information on `sinteractive`, see the relevant [documentation on CSC Docs](https://docs.csc.fi/computing/running/interactive-usage/).
+
+
+```bash
+sinteractive -A <account> -t 00:10:00 -c 2
+```
+
+**2.2 Starting terminal R within the interactive session**
+
+It's a good idea to clear out any pre-loaded modules before loading `r-env-singularity` (this way we make sure we're starting off a clean slate).
+To do this, run the following command:
+
+```bash
+module purge
+```
+
+Next, load the most recent version of `r-env-singularity` with:
+
+```bash
+module load r-env-singularity
+
+# Question: what if you'd like to load an older version of the module?
+```
+
+Once the module is loaded, launch the terminal version of R using the following command:
+
+```bash
+start-r
+```
+
+This will give you access to the single-threaded version of R. If you wanted an interactive terminal R session with multithreading enabled, you could use `start-r-multithread` instead.
+
+Anyhow - since we don't want to do any actual work using the interactive session, we can now quit R with `q()` and then leave the interactive session by typing `exit` back on the Puhti terminal.
+
+A little trivia still for the interested:
+
+- Having custom start scripts for `r-env-singularity` makes it possible to offer a simple way to launch interactive R sessions (without needing to execute multiple commands from the command line).
+- For example, `start-r` automatically cleans up several variables that might be present in `~/.Renviron` and binds several folders to the `r-env-singularity` container (that the container would not otherwise be aware of).
+
+#### **3. Getting used to R batch job files**
+
+**3.1 Some preparation**
+
+Now that we've tried accessing RStudio and interactive R terminal sessions, it's time to turn to non-interactive jobs. We'll try a few quick ones first to get to grips with batch job files, and how the system works on the whole.
+
+This is a good moment to navigate to your project folder in `/projappl` and create a directory of your own:
+
+```bash
+cd /projappl/<project>
+mkdir <yourname>  # e.g. your surname
+cd <yourname> 
+```
+
+**3.2 Creating a serial job file**
+
+One question that often comes up is how to best create batch job files. One way is to type the contents in any text editor on your own computer (e.g. Wordpad) and then copy-paste them into a file on Puhti. That's useful for single files (but for moving several files, [there are many alternatives](https://docs.csc.fi/data/moving/.)
+
+For now, copy-paste the following serial batch job file and **fill in the correct details for your project and email address**. Including `--mail-type=END` and your email will instruct Slurm to send you an email once the job is finished, or if it terminates for any other reason.
+
+```bash
+#!/bin/bash -l
+#SBATCH --job-name=r_single_proc
+#SBATCH --account=<account>
+#SBATCH --mail-type=END
+#SBATCH --mail-user=<email-address>
+#SBATCH --output=output_%j.txt
+#SBATCH --error=errors_%j.txt
+#SBATCH --partition=test
+#SBATCH --time=00:05:00
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#SBATCH --mem-per-cpu=1000
+
+# Load r-env-singularity
+module load r-env-singularity
+
+# Clean up .Renviron file in home directory
+if test -f ~/.Renviron; then
+    sed -i '/TMPDIR/d' ~/.Renviron
+fi
+
+# Specify a temp folder path
+echo "TMPDIR=/scratch/<project>" >> ~/.Renviron
+
+# Run the R script
+srun singularity_wrapper exec Rscript --no-save r_serialtest_script.R
+```
+
+You can copy the modified file using e.g. `ctrl + C`. After that, create a new file called `serialjob.sh` on the Puhti command line using `nano`:
+
+```bash
+nano serialjob.sh
+```
+
+This will open up GNU nano, essentially a blank screen with various options on the bottom of the window. Next: 
+
+```bash
+# 1. Paste the modified batch job script into nano with ctrl + shift + v
+# 2. Type ctrl + x, this will ask nano to quit
+# 3. Answer Y when it asks about saving the modified buffer (and Enter to exit)
+```
+
+**3.2 Submitting a very quick R serial job**
+
+We're still missing `r_serialtest_script.R`. You can create it in the same folder where you have your batch job file. For this basic test, all we need for the R script is:
+
+```r
+print("Check out how many cores I've got:")
+
+options(future.availableCores.methods = "Slurm")
+future::availableCores()
+```
+
+Once that's set up, try submitting the batch job file:
+
+```bash
+sbatch serialjob.sh
+```
+
+That should complete very quickly. We can check the output on the command line using the command `less` followed by the name of the output file.
+
+**3.3 Serial `brms` job**
+
+Ok, next let's try a slightly more realistic serial job using the R package `brms` (which also employs `rstan`). 
+
+Your batch job file should look like this (remember to modify it again, also note the higher memory reservation):
+
+```bash
+#!/bin/bash -l
+#SBATCH --job-name=brms_serial
+#SBATCH --account=<account>
+#SBATCH --mail-type=END
+#SBATCH --mail-user=<email-address>
+#SBATCH --output=output_%j.txt
+#SBATCH --error=errors_%j.txt
+#SBATCH --partition=test
+#SBATCH --time=00:05:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --nodes=1
+#SBATCH --mem-per-cpu=3000
+
+# Load r-env-singularity
+module load r-env-singularity
+
+# Clean up .Renviron file in home directory
+if test -f ~/.Renviron; then
+    sed -i '/TMPDIR/d' ~/.Renviron
+fi
+
+# Specify a temp folder path
+echo "TMPDIR=/scratch/<account>" >> ~/.Renviron
+
+# Run the R script
+srun singularity_wrapper exec Rscript --no-save brms_serial.R
+```
+
+... And `brms_serial.R` should have the following contents:
+
+```r
+library(brms)
+library(tictoc)
+
+tic()
+
+fit <- brm(
+  count ~ zAge + zBase * Trt + (1|patient),
+  data = epilepsy, family = poisson(),
+  chains = 4
+)
+
+toc()
+```
+
+After submitting this job, it will take some time for it to finish.
+Once it's done, check the end of the output. How long was the analysis time?
+
+**3.3 Trying out a multicore `brms` job**
+
+Usually we want to run multiple chains when working with `brms` (in our case, four). We could try and speed up the job by reserving more cores, with a single core assigned per chain.
+
+To submit a multicore version of the `brms` job, create a new batch job file with the following differences:
+
+- The `--job-name` could be `brms_multicore`
+- Instead of `--cpus-per-task=1`, use `--cpus-per-task=4`
+- `--mem-per-cpu` should be 1000
+- Switch `brms_serial.R` to `brms_multicore.R`
+
+Then create `brms_multicore.R`:
+
+```r
+library(brms)
+library(tictoc)
+
+options(future.availableCores.methods = "Slurm")
+options(mc.cores = future::availableCores())
+
+cores <- getOption("mc.cores")
+
+tic()
+
+fit_parallel <- brm(
+  count ~ zAge + zBase * Trt + (1|patient),
+  data = epilepsy, family = poisson(),
+  chains = 4, cores = cores
+)
+
+toc()
+```
+Try running the job. How long did it take this time?
+
+**3.4 A few words on `brms`  within-chain parallelism**
+
+The most recent version of `brms` comes with additional features for within-chain parallelism, which could be used to further speed up the analysis time. For information on this, [there is a comprehensive vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_threading.html).
+
+Currently (15 Nov 2021) within-chain parallelisation with `brms` is unavailable in `r-env-singularity`, as this feature relies on the `CmdStanR` backend. To enable this feature, work will need to be undertaken to install `CmdStan` as part of the container recipe.
+
