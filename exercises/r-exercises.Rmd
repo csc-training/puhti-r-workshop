@@ -22,7 +22,7 @@ opts_knit$set(width=75)
 
 # `r-env-singularity` on Puhti
 
-These practical exercises accompany a wider set of slides on the `r-env-singularity` module, [available via GitHub Pages](https://csc-training.github.io/puhti-r-workshop/slides/html/r-env.html#/r-env-singularity-on-puhti).
+These practical exercises accompany a wider set of slides on the `r-env-singularity` module, [available via GitHub Pages](https://csc-training.github.io/puhti-r-workshop/slides/html/05_r-env.html).
 
 Other useful links:
 
