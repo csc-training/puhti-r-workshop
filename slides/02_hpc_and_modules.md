@@ -3,7 +3,7 @@ theme: csc-2019
 lang: en
 ---
 
-# Brief introduction to HPC environments and disk areas {.title}
+# HPC environments and modules {.title}
 
 <div class="column">
 ![](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-sa.png)
