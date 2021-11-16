@@ -74,6 +74,14 @@ sinteractive -A <account> -t 00:30:00 -m 8000 -c 4
    - Hybrid jobs combining elements of the above
    - Array: a way to submit many parallel jobs
 
+# Running in parallel
+
+- R code (like many others) is typically parallelized with MPI and/or OpenMP standards
+- Both are widely used standards for writing software that run in parallel
+   - MPI (Message Passing Interface) utilizes compute cores that do not share their memory (requires messaging between cores)
+   - For OpenMP (Open Multi-Processing), memory is shared and does not require message passing
+- Some useful self-study materials are available on the [CSC Introduction to Parallel Programming GitHub repository](https://github.com/csc-training/parallel-prog/)
+
 ***
 
 <p align="center">
@@ -216,7 +224,7 @@ export SINGULARITYENV_OMP_PROC_BIND=close
 - The rest is optimization (see [r-env-singularity documentation](https://docs.csc.fi/apps/r-env-singularity/))
 - OpenMP x MPI jobs get quite complicated and are not covered here
     - However, [CSC Docs has an example](https://docs.csc.fi/apps/r-env-singularity/#openmp-mpi-hybrid-jobs)
-    - Next slide has a more basic MPI job example
+    - Next slide features more general information on MPI jobs
 
 # MPI jobs (e.g. `snow`, `doMPI`, `pbdMPI`)
 
@@ -234,7 +242,22 @@ export SINGULARITYENV_OMP_PROC_BIND=close
     - In practice this means reserving one more task than the planned no. of workers
     - `snow` is also launched using `RMPISNOW` rather than `Rscript`
     - `doMPI` does not need a master task or a special launch command
-- **Conclusion:** get familiar with the packages you're using 
+- **Conclusion:** get familiar with the packages you're using, and your R code
+
+# Combining different types of parallelism
+
+- Array jobs can be combined with threading
+- To take things even futher, these could also be combined with MPI to run several jobs in parallel
+    - In this setup you’d have three layers or parallelization array-MPI-OpenMP
+    - Setting this up will take skill and time
+    - Always test your setup - a typo can result in a lot of lost resources
+
+# A few words on R code optimization
+
+- Use profiling tools to find out how much time is spent in different parts of the code
+    - e.g. `profvis` package
+- When the computing bottlenecks are identified, try to figure out ways to improve the code
+    - servicedesk@csc.fi can also help with this
 
 # Pre-installed vs user-installed R packages
 <p align="center">
@@ -258,7 +281,44 @@ libpath <- .libPaths()[1]
 - Step 4: Add `libpath` to your actual R script (so your packages are found)
 - Step 5: Use `lib.loc` where needed
 
-# A few important take-home messages
+# Using NVME (fast local storage)
+
+<font size="6">
+
+```text
+#!/bin/bash -l
+#SBATCH --job-name=r_serial_fastlocal
+#SBATCH --account=<project>
+#SBATCH --output=output_%j.txt
+#SBATCH --error=errors_%j.txt
+#SBATCH --partition=test
+#SBATCH --time=00:05:00
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#SBATCH --mem-per-cpu=1000
+#SBATCH --gres=nvme:10
+
+# Load the module
+module load r-env-singularity
+
+# Clean up .Renviron file in home directory
+if test -f ~/.Renviron; then
+    sed -i '/TMPDIR/d' ~/.Renviron
+fi
+
+# Specify NVME temp folder path
+echo "TMPDIR=$TMPDIR" >> ~/.Renviron
+
+# Run the R script
+srun singularity_wrapper exec Rscript --no-save myscript.R
+```
+</font>
+
+- Key additions are:
+    - `--gres=nvme:10` (reserves 10GB)
+    - `echo "TMPDIR=$TMPDIR" >> ~/.Renviron`
+
+# Take-home messages
 
 - Using `r-env-singularity` has many benefits:
     - Pre-configured, transparent environment
@@ -270,3 +330,4 @@ libpath <- .libPaths()[1]
     - Typically solutions are CPU-based (rather than GPU-based)
 
 A useful resource: [CRAN Task View for HPC](https://cran.r-project.org/web/views/HighPerformanceComputing.html)
+
