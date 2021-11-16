@@ -423,7 +423,7 @@ Feel free to check out the output file, which will list a number of details base
 
 #### **4. Further batch job examples**
 
-We might also be interested in using packages like `snow` or `pbdMPI` for MPI jobs.
+We might also be interested in using packages like `pbdMPI` for MPI jobs.
 Some examples of these can be found in the `r-env-singularity` documentation under the [parallel batch jobs section](https://docs.csc.fi/apps/r-env-singularity/#parallel-batch-jobs).
 
-Several further examples on running serial and parallel R jobs using e.g. the packages `snow`, `parallel` and `future` for the analysis of spatial data can be found [in this repository](The https://github.com/csc-training/geocomputing/tree/master/R/puhti).
+Several further examples on running serial and parallel R jobs using the packages `snow`, `parallel` and `future` for the analysis of spatial data can be found [in this repository](The https://github.com/csc-training/geocomputing/tree/master/R/puhti).
