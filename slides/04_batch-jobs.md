@@ -133,6 +133,33 @@ srun echo "Hello $USER! You are on node $HOSTNAME"
 - Batch job script [how-to create](https://docs.csc.fi/computing/running/creating-job-scripts-puhti/) and [examples](https://docs.csc.fi/computing/running/example-job-scripts-puhti/) for Puhti
 - **The best starting point:** [Software specific batch scripts in docs](https://docs.csc.fi/apps/)
 
+# Parallel resource reservation: a couple of examples
+
+- Multicore OpenMP job
+
+<font size="6">
+```bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=X
+```
+</font>
+
+- Multicore MPI job
+
+<font size="6">
+```bash
+#SBATCH --nodes=X
+#SBATCH --ntasks-per-node=Y
+#SBATCH --cpus-per-task=Z
+```
+</font>
+
+- `--cpus-per-task` is typically used for OpenMP jobs
+- `--ntasks` is typically used for MPI jobs
+    - A task cannot be split between nodes, but tasks can be on different nodes
+    - `--ntasks-per-node` can be used for finer control
+
 # HPC GPU jobs 
 
 - A graphics processing unit (GPU, a video card), is capable of doing certain type of simultaneous calculations very efficiently
