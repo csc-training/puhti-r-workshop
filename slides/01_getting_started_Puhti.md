@@ -43,9 +43,11 @@ Unported License, [http://creativecommons.org/licenses/by-sa/4.0/](http://creati
 # CSC Project
 
 - CSC Projects are used for managing access to CSC services and resources
-- Each project has its own disk quotas and billing unit quota
+- Each project has its own disk quotas and billing unit quota (see [MyCSC](https://my.csc.fi)
 - Every project has a project manager and members
     - [Prerequisites and responsibilities of a project manager](https://www.csc.fi/en/prerequisites-for-a-project-manager)
+- The project lifetime has to be [extended yearly](https://docs.csc.fi/accounts/how-to-manage-your-project/) if the project still continues
+- After the project is closed the data will be cleaned (see [Chapter 10. of General Terms of Use](https://research.csc.fi/general-terms-of-use))
 
 # Questions about CSC accounts and projects?
 
@@ -70,12 +72,11 @@ Unported License, [http://creativecommons.org/licenses/by-sa/4.0/](http://creati
    - For example, IDE-like _Visual Studio Code_ or a text editor like _Notepad++_
 - Follow these [detailed instructions to set them up](https://docs.csc.fi/support/tutorials/remote-dev/)
 
-
 # Questions about logging in?
 
 - You have logged in via [Command Line](https://docs.csc.fi/computing/connecting/) and/or [Web Interface](https://docs.csc.fi/computing/webinterface/)
 
-VOTE: Do you want to go through  
+POLL: Do you want to go through  
 a) [Command Line / SSH login?](https://docs.csc.fi/computing/connecting/)  
 b) [Setting up SSH-keys](https://docs.csc.fi/computing/connecting/#setting-up-ssh-keys)  
 c) [Developing scripts remotely](https://docs.csc.fi/support/tutorials/remote-dev/)  
