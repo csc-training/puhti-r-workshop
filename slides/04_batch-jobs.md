@@ -274,25 +274,25 @@ srun echo "Hello $USER! You are on node $HOSTNAME"
    - Filling up a single node is preferrable over "thinly spread" multi-node jobs
    - Multi-node jobs carry additional overhead (i.e. at worst will slow the analysis down rather than offer a performance benefit)
 
-# A few important take-home messages, pt. 1
+# Take-home messages, pt. 1
 
 - Try to first formulate your scientific results when you have a minimum amount of computational results
-    - It often helps to clarify what you still need to compute and what computations would be redundant
+    - It often helps to clarify what you still need to compute
     - ... And what results you need to store
-    - Be careful in submitting large numbers of jobs before you know the results are really what you are looking for
+    - Can also help ensure the results are what you are looking for
     
-- Reserving more memory resources and more compute cores does not necessary mean faster computations
-    - Check with seff, sacct and from the logs if the memory was used, and if the job ran faster
-    - Testing for optimal setup regarding compute cores and memory is good practice before performing massive computations
+- Reserving more memory / cores does not necessary mean faster computation
+    - Check with `seff`, `sacct` and logs if the memory was used, and if the job ran faster
+    - Testing for optimal setup regarding cores and memory is good practice before performing massive computations
 
-# A few important take-home messages, pt. 2
+# Take-home messages, pt. 2
 
 - Running the same job on a laptop may be useful for comparison
 - Avoid unnecessary reads and writes of data
     - Read and write in big chunks. 
     - Avoid writes/reads of huge numbers of small files; if this is necessary, use NVME (fast local storage)
-- Don’t run too short jobs
+- Don’t run jobs that are too short
     - There’s a time-overhead in setting up a batch job. Aim for at least 30 minute jobs.
-- Don’t run too long jobs
+- Don’t run jobs that are too long
     - The possibility of something going wrong gets bigger with risk of losing time and results
 
