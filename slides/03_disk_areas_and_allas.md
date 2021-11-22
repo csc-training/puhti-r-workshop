@@ -203,7 +203,7 @@ Use with care: [rclone instructions in Docs CSC](https://docs.csc.fi/#data/Allas
 - Unlike rclone, a-tools do not overwrite and remove data without asking!
 - Automatic packing and compression.
 - Default bucket names based on directories of Puhti and Mahti
-- [a-commands instructions in Docs CSC](https://docs.csc.fi/#data/Allas/using_allas/a_commands/)
+- [a-commands instructions in Docs CSC](https://docs.csc.fi/data/Allas/using_allas/a_commands/)
 
 # Allas problems
 
