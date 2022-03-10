@@ -69,24 +69,19 @@ sinteractive -A <account> -t 00:30:00 -m 8000 -c 4
 - Serial
    - Single core on a single node
 - Parallel
-   - Multicore: many cores on one or more nodes
-   - Multithread: many threads per core
+   - Multiprocessing (many simultaneously running copies of R)
+   - Multithreading (e.g. linear algebra routines)
+   - Multinode (splitting jobs over many compute nodes)
    - Hybrid jobs combining elements of the above
    - Array: a way to submit many parallel jobs
 
 # Running in parallel
 
-- R code (like many others) is typically parallelized with MPI and/or OpenMP standards
+- R code (like many others) is typically parallelized with OpenMP and/or MPI standards
 - Both are widely used standards for writing software that run in parallel
-   - MPI (Message Passing Interface) utilizes compute cores that do not share their memory (requires messaging between cores)
-   - For OpenMP (Open Multi-Processing), memory is shared and does not require message passing
+	- Jobs using many cores typically use OpenMP
+	- MPI is used for multinode jobs
 - Some useful self-study materials are available on the [CSC Introduction to Parallel Programming GitHub repository](https://github.com/csc-training/parallel-prog/)
-
-***
-
-<p align="center">
-  <img src="./img/parallel-modes.svg">
-</p>
 
 # Serial job
 
@@ -222,7 +217,7 @@ export SINGULARITYENV_OMP_PROC_BIND=close
 
 - Matching no. of threads and cores typically gives best results
 - The rest is optimization (see [r-env-singularity documentation](https://docs.csc.fi/apps/r-env-singularity/))
-- OpenMP x MPI jobs get quite complicated and are not covered here
+- OpenMP x MPI jobs are complicated and are not covered here
     - However, [CSC Docs has an example](https://docs.csc.fi/apps/r-env-singularity/#openmp-mpi-hybrid-jobs)
     - Next slide features more general information on MPI jobs
 
@@ -248,7 +243,7 @@ export SINGULARITYENV_OMP_PROC_BIND=close
 
 - Array jobs can be combined with threading
 - To take things even futher, these could also be combined with MPI to run several jobs in parallel
-    - In this setup you’d have three layers or parallelization array-MPI-OpenMP
+    - In this setup you’d have three layers or parallelization (array-MPI-OpenMP)
     - Setting this up will take skill and time
     - Always test your setup - a typo can result in a lot of lost resources
 
